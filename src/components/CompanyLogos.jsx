@@ -1,4 +1,4 @@
-import { gdc_logo } from "../assets";
+import { google_cloud_logo } from "../assets";
 
 const CompanyLogos = ({ className }) => {
   return (
@@ -15,12 +15,12 @@ const CompanyLogos = ({ className }) => {
         ))} */}
         <li className="flex flex-row gap-4 items-center justify-center flex-1 h-[8.5rem]">
           <img
-            src={gdc_logo}
-            width={120}
+            src={google_cloud_logo}
+            width={100}
             height={28}
             alt="google_developer_student_club_logo"
           />
-          <h2>Google Developer Student Club</h2>
+          <h2 className="text-xl">Google Cloud</h2>
         </li>
       </ul>
     </div>

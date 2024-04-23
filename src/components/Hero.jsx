@@ -42,9 +42,15 @@ const Hero = () => {
             Explora, haz match y conéctate con tu mascota ideal, tu futuro
             Compañero.
           </p>
-          <Button href="/pricing" white>
+          <Button href="#waitlist">Únete a la lista de espera</Button>
+          {/* <Button
+            href="#pricing"
+            onClick={() => {
+              window.location.hash = "pricing";
+            }}
+          >
             Únete a la lista de espera
-          </Button>
+          </Button> */}
         </div>
         <div className="relative max-w-[23rem] mx-auto md:max-w-5xl xl:mb-24">
           <div className="relative z-1 p-0.5 rounded-2xl bg-conic-gradient">

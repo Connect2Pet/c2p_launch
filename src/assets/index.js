@@ -2,7 +2,7 @@ import curve from "./hero/curve.png";
 import robot from "./hero/robot.jpg";
 import hero_dog from "./hero/hero_dog.png";
 import heroBackground from "./hero/hero-background.jpg";
-import gdc_logo from "./hero/gdc.png";
+import google_cloud_logo from "./hero/gc.webp";
 
 import discordBlack from "./socials/discord.svg";
 import facebook from "./socials/facebook.svg";
@@ -29,7 +29,7 @@ export {
   robot,
   hero_dog,
   heroBackground,
-  gdc_logo,
+  google_cloud_logo,
   notification1,
   notification2,
   notification3,

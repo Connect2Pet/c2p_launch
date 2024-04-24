@@ -1,7 +1,6 @@
 import curve from "./hero/curve.png";
-import robot from "./hero/robot.jpg";
-import hero_dog from "./hero/hero_dog.png";
-import heroBackground from "./hero/hero-background.jpg";
+import hero_dog from "./hero/hero_dog.webp";
+import heroBackground from "./hero/hero-background.webp";
 import google_cloud_logo from "./hero/gc.webp";
 
 import discordBlack from "./socials/discord.svg";
@@ -20,13 +19,12 @@ import homeSmile from "./svg/home-smile.svg";
 import plusSquare from "./svg/plus-square.svg";
 import searchMd from "./svg/search-md.svg";
 
-import loading from "./hero/loading.png";
+import loading from "./hero/loading.webp";
 
 import c2p_logo from "./hero/c2p_mobile.webp";
 
 export {
   curve,
-  robot,
   hero_dog,
   heroBackground,
   google_cloud_logo,

@@ -18,7 +18,7 @@ const CompanyLogos = ({ className }) => {
             src={google_cloud_logo}
             width={100}
             height={28}
-            alt="google_developer_student_club_logo"
+            alt="google_cloud_logo"
           />
           <h2 className="text-xl">Google Cloud</h2>
         </li>

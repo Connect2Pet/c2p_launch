@@ -180,3 +180,13 @@
 .wave-group .input:focus ~ .bar:after {
   width: 50%;
 }
+
+.input-error {
+  border-color: #ff6347; /* Tomato red for errors */
+  background-color: #fff0f0; /* Light red background */
+}
+
+.dropdown-error {
+  border-color: #ff6347;
+  background-color: #fff0f0;
+}

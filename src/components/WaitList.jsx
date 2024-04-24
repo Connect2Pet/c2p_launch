@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Heading from "./Heading";
 import Section from "./Section";
 import CustomDropdown from "./CustomDropdown";
+import { sendFormData } from "../lib/utils";
+import { useForm } from "react-hook-form";
+import useCountdown from "../lib/hooks/useCountdown";
+import useSubmissionStore from "../lib/stores/useFormSubmissionStore";
 
-const Digits = ({ number, label }) => {
+const Digits = React.memo(({ number, label }) => {
   const bars = [
     ["end", "top"],
     ["side", "top", "left"],
@@ -32,7 +36,7 @@ const Digits = ({ number, label }) => {
       <div className="ml-2 text-lg">{label}</div>
     </div>
   );
-};
+});
 
 const Colon = () => (
   <div className="colon-group">
@@ -48,123 +52,85 @@ const Colon = () => (
   </div>
 );
 
-const getTargetDate = () => {
-  const now = new Date();
-  const year =
-    now.getMonth() > 4 && now.getDate() > 25
-      ? now.getFullYear() + 1
-      : now.getFullYear();
-  return new Date(year, 4, 26); // Month is 0-indexed, 4 = May
-};
+//   const now = new Date();
+//   const year =
+//     now.getMonth() > 4 && now.getDate() > 25
+//       ? now.getFullYear() + 1
+//       : now.getFullYear();
+//   return new Date(year, 4, 26); // Month is 0-indexed, 4 = May
+// };
 
-const sendFormData = (formData) => {
-  fetch(
-    "https://script.google.com/macros/s/AKfycbz-AfbPqHqc6-dR2YGd6zdzlLBwSVYEdRihDMpM647T58LesT87N8GWhC35arbnEW2mgQ/exec",
-    {
-      method: "POST",
-      body: formData,
-    }
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      setFormData({ email: "", name: "", profileType: "" });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+// const sendFormData = (formData) => {
+//   fetch(
+//     "https://script.google.com/macros/s/AKfycbz-AfbPqHqc6-dR2YGd6zdzlLBwSVYEdRihDMpM647T58LesT87N8GWhC35arbnEW2mgQ/exec",
+//     {
+//       method: "POST",
+//       body: formData,
+//     }
+//   )
+//     .then((res) => res.json())
+//     .then((data) => {
+//       console.log(data);
+//       setFormData({ email: "", name: "", profileType: "" });
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+// };
 
 const WaitList = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [countdown, setCountdown] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-
   const [formData, setFormData] = useState({
     email: "",
     name: "",
     profileType: "adopter",
   });
 
-  const [errors, setErrors] = useState({
-    email: "",
-    name: "",
-    profileType: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm({
+    defaultValues: {
+      email: "",
+      name: "",
+      profileType: "adopter",
+    },
   });
 
-  const validateForm = () => {
-    let errors = {};
-    let formIsValid = true;
+  const addSubmission = useSubmissionStore((state) => state.addSubmission);
+  const hasSubmitted = useSubmissionStore((state) => state.hasSubmitted);
 
-    // Email validation
-    if (!formData.email) {
-      formIsValid = false;
-      errors["email"] = "Email is required.";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      formIsValid = false;
-      errors["email"] = "Email is invalid.";
+  const countdown = useCountdown();
+  const email = watch("email");
+  const alreadySubmitted = hasSubmitted(email);
+
+  const onSubmit = async (data) => {
+    if (alreadySubmitted) {
+      alert("You have already submitted the form.");
+      return;
     }
 
-    // Name validation
-    if (!formData.name) {
-      formIsValid = false;
-      errors["name"] = "Name is required.";
-    }
-
-    // Profile Type validation
-    if (!formData.profileType) {
-      formIsValid = false;
-      errors["profileType"] = "Profile type is required.";
-    }
-
-    setErrors(errors);
-    return formIsValid;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
     setLoading(true);
-    if (validateForm()) {
-      const formDataObj = new FormData();
-      formDataObj.append("Email", formData.email);
-      formDataObj.append("Name", formData.name);
-      formDataObj.append("Profiletype", formData.profileType);
-      sendFormData(formDataObj);
+    const formData = new FormData();
+    formData.append("Email", data.email);
+    formData.append("Name", data.name);
+    formData.append("Profiletype", data.profileType);
 
-      setFormData({ email: "", name: "", profileType: "" });
+    try {
+      await sendFormData(formData);
+      reset(); // Clear form fields after submission
+      setSubmitted(true); // Update state to reflect submission status
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
+      addSubmission(data.email);
       setLoading(false);
-      setSubmitted(true);
     }
   };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  useEffect(() => {
-    const targetDate = getTargetDate();
-    const updateCountdown = () => {
-      const now = new Date();
-      const timeLeft = Math.max(0, targetDate - now); // Ensure we don't go negative
-      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
-      const seconds = Math.floor((timeLeft / 1000) % 60);
-      setCountdown({ days, hours, minutes, seconds });
-    };
-
-    const timerID = setInterval(updateCountdown, 1000);
-    return () => clearInterval(timerID);
-  }, []);
 
   useEffect(() => {
     const isSafari =
@@ -233,58 +199,82 @@ const WaitList = () => {
               </div>
             </div>
           </div>
-
           {!submitted ? (
-            <div className="flex flex-col items-center justify-start w-full gap-8">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col items-center justify-start w-full gap-8"
+            >
               <h1 className="max-w-3xl mx-auto mb-6 text-center body-1 text-n-2 lg:mb-8">
                 ¿Quieres ser uno de los primeros usuarios beta en Connect2Pet?
                 Déjanos tus datos abajo y únete a la lista de espera
               </h1>
-              <form className="flex flex-col items-center justify-center w-full gap-6">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  required
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full max-w-xs text-white input input-bordered input-primary"
-                />
-                {errors.email && (
-                  <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-                )}
-                <input
-                  type="text"
-                  placeholder="Nombre"
-                  required
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full max-w-xs text-white input input-bordered input-info"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-xs text-red-500">{errors.name}</p>
-                )}
-                <CustomDropdown
-                  label="Qué te gustaria hacer en Connect2Pet?"
-                  options={options}
-                  name="profileType"
-                  onChange={handleChange}
-                  value={formData.profileType}
-                />
-                {errors.profileType && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {errors.profileType}
-                  </p>
-                )}
-                <button
-                  className="text-white btn btn-primary"
-                  onClick={handleSubmit}
-                >
-                  Enviar
-                </button>
-              </form>
-            </div>
+              <input
+                disabled={loading}
+                type="email"
+                placeholder="Email"
+                aria-label="Email" // Clear label for screen readers
+                aria-required="true" // Indicates that the field is required
+                {...register("email", {
+                  required: "Email is required.",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "Please enter a valid email address.",
+                  },
+                })}
+                className={`input input-bordered input-primary w-full max-w-xs ${
+                  errors.email ? "input-error" : ""
+                }`}
+              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.email.message}
+                </p>
+              )}
+              <input
+                disabled={loading}
+                type="text"
+                placeholder="Nombre"
+                aria-label="Nombre" // Clear label for screen readers
+                aria-required="true" // Indicates that the field is required
+                {...register("name", { required: "Name is required." })}
+                className={`input input-bordered input-info w-full max-w-xs ${
+                  errors.name ? "input-error" : ""
+                }`}
+              />
+              {errors.name && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.name.message}
+                </p>
+              )}
+              <CustomDropdown
+                disabled={loading}
+                label="Qué te gustaría hacer en Connect2Pet?"
+                options={options}
+                {...register("profileType", {
+                  required: "Profile type is required.",
+                })}
+                classNames={`dropdown ${
+                  errors.profileType ? "dropdown-error" : ""
+                }`}
+              />
+              {errors.profileType && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.profileType.message}
+                </p>
+              )}
+              <button
+                type="submit"
+                className="text-white btn btn-primary"
+                disabled={loading}
+              >
+                {`${loading ? "Enviando..." : "Enviar"}`}
+              </button>
+              {alreadySubmitted && (
+                <p className="mt-1 text-md text-info animate-pulse">
+                  Ya hemos recibido tus datos, estate atent@ a tu correo!
+                </p>
+              )}
+            </form>
           ) : (
             <div className="flex items-center justify-center w-full">
               <h1 className="max-w-3xl mx-auto mb-6 text-center body-1 text-n-2 lg:mb-8">

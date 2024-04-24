@@ -248,7 +248,7 @@ const WaitList = () => {
               )}
               <CustomDropdown
                 disabled={loading}
-                label="Qué te gustaría hacer en Connect2Pet?"
+                label="¿Qué te gustaría hacer en Connect2Pet?"
                 options={options}
                 {...register("profileType", {
                   required: "Profile type is required.",

@@ -9,7 +9,7 @@ const Footer = () => {
           © {new Date().getFullYear()} Connect2Pet
         </p>
 
-        <ul className="flex flex-wrap gap-5">
+        {/* <ul className="flex flex-wrap gap-5">
           {socials.map((item) => (
             <a
               key={item.id}
@@ -20,7 +20,7 @@ const Footer = () => {
               <img src={item.iconUrl} width={16} height={16} alt={item.title} />
             </a>
           ))}
-        </ul>
+        </ul> */}
       </div>
     </Section>
   );

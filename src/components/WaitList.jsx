@@ -212,8 +212,8 @@ const WaitList = () => {
                 disabled={loading}
                 type="email"
                 placeholder="Email"
-                aria-label="Email" // Clear label for screen readers
-                aria-required="true" // Indicates that the field is required
+                aria-label="Email"
+                aria-required="true"
                 {...register("email", {
                   required: "Email is required.",
                   pattern: {
@@ -221,7 +221,7 @@ const WaitList = () => {
                     message: "Please enter a valid email address.",
                   },
                 })}
-                className={`input input-bordered input-primary w-full max-w-xs ${
+                className={`input input-bordered input-primary w-full max-w-xs bg-[#1D232A] ${
                   errors.email ? "input-error" : ""
                 }`}
               />
@@ -234,10 +234,10 @@ const WaitList = () => {
                 disabled={loading}
                 type="text"
                 placeholder="Nombre"
-                aria-label="Nombre" // Clear label for screen readers
-                aria-required="true" // Indicates that the field is required
+                aria-label="Nombre"
+                aria-required="true"
                 {...register("name", { required: "Name is required." })}
-                className={`input input-bordered input-info w-full max-w-xs ${
+                className={`input input-bordered input-info w-full max-w-xs bg-[#1D232A] ${
                   errors.name ? "input-error" : ""
                 }`}
               />
@@ -253,7 +253,7 @@ const WaitList = () => {
                 {...register("profileType", {
                   required: "Profile type is required.",
                 })}
-                classNames={`dropdown ${
+                classNames={`dropdown bg-[#1D232A] ${
                   errors.profileType ? "dropdown-error" : ""
                 }`}
               />

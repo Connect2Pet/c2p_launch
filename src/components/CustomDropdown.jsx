@@ -15,7 +15,7 @@ const Dropdown = React.forwardRef(
             ref={ref} // Attach the forwarded ref to the select element
             aria-label="Profile Type" // Clear label for screen readers
             aria-required="true" // Indicates that the field is required
-            className={`w-full max-w-xs p-3 rounded-lg bg-slate-600  ${classNames}`}
+            className={`w-full max-w-xs p-3 rounded-lg bg-[#1D232A]  ${classNames}`}
           >
             {options.map((option) => (
               <option key={option.value} value={option.value}>

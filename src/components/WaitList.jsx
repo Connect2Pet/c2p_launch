@@ -253,7 +253,7 @@ const WaitList = () => {
                 {...register("profileType", {
                   required: "Profile type is required.",
                 })}
-                classNames={`dropdown bg-[#1D232A] ${
+                classNames={`dropdown ${
                   errors.profileType ? "dropdown-error" : ""
                 }`}
               />
